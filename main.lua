@@ -1,0 +1,2 @@
+-- name: Subtitles
+-- description: Subtitles v1\n\nAdds subtitles for every sound.\n\n- kermeet
