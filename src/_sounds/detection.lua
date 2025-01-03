@@ -15,6 +15,7 @@ local sound_flag_names = {
 ---@field upper_flags integer
 ---@field lower_flags integer
 ---@field tick integer
+---@field pos Vec3f
 
 ---@type SoundQueueItem[]
 gSubtitleSoundQueue = {}
@@ -54,8 +55,10 @@ local function on_play_sound(bits, pos)
         sound_result = sound,
         upper_flags = upper_flags,
         lower_flags = lower_flags,
-        tick = get_global_timer()
+        tick = get_global_timer(),
+        pos = pos
     }
+
     table.insert(gSubtitleSoundQueue, queuedSound)
 end
 hook_event(HOOK_ON_PLAY_SOUND, on_play_sound)
