@@ -32,6 +32,17 @@ local function on_play_sound(bits, pos)
 
     if bank_id ~= SOUND_BANK_MOVING and lower_flags & SOUND_DISCRETE == 0 then return end
 
+    -- special cases
+    if bank_id == SOUND_BANK_MENU then
+        if sound_id == 0x23 then -- STAR_SOUND_OKEY_DOKEY
+            bank_id = SOUND_BANK_MARIO_VOICE
+            sound_id = 0x21
+        elseif sound_id == 0x24 then -- STAR_SOUND_OKEY_DOKEY
+            bank_id = SOUND_BANK_MARIO_VOICE
+            sound_id = 0x38
+        end
+    end
+
     local sound = find_sound(bank_id, sound_id)
 
     if sound == nil then

@@ -206,6 +206,7 @@ do -- Game sounds
         add_sound(bank, 0x35, "SNORING", SOUND_TYPE_VOICE)
         add_sound(bank, 0x36, "SO_LONGA_BOWSER", SOUND_TYPE_VOICE)
         add_sound(bank, 0x37, "IMA_TIRED", SOUND_TYPE_VOICE)
+        add_sound(bank, 0x38, "LETS_A_GO", SOUND_TYPE_VOICE)
 
         -- Do Peach voicelines need to be subtitled? Usually include existing subtitles/text afaik
         -- add_sound(bank, 0x28, "PEACH_LETTER", SOUND_TYPE_VOICE) -- SOUND_PEACH_DEAR_MARIO
@@ -505,8 +506,8 @@ do -- Game sounds
         add_sound(bank, 0x1E, "STAR_SOUND", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x1F, "THANK_YOU_PLAYING_MY_GAME", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x22, "MARIO_CASTLE_WARP2", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x23, "STAR_SOUND_OKEY_DOKEY", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x24, "STAR_SOUND_LETS_A_GO", SOUND_TYPE_VOICE)
+        -- add_sound(bank, 0x23, "STAR_SOUND_OKEY_DOKEY", SOUND_TYPE_VOICE)
+        -- add_sound(bank, 0x24, "STAR_SOUND_LETS_A_GO", SOUND_TYPE_VOICE)
         add_sound(bank, 0x28, "COLLECT_RED_COIN", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x30, "COLLECT_SECRET", SOUND_TYPE_EFFECT)
     end
