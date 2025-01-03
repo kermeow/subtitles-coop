@@ -21,10 +21,14 @@ local SubtitleRegistry = {
 }
 
 ---Gets the subtitle text for a sound
----@param set SubtitleSet
+---@param set_id integer
 ---@param sound SoundResult
 ---@return string?
-function get_subtitle(set, sound)
+function get_subtitle(set_id, sound)
+    local set = SubtitleRegistry.all[set_id]
+    if set == nil then
+        return "SUBTITLE SET DOES NOT EXIST"
+    end
     local full_name = sound.bank.name .. "/" .. sound.sound.name
     if sound.variant then
         local subtitle = set.subtitles[full_name .. "." .. sound.sound.variants[sound.variant]]
