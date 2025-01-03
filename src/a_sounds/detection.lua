@@ -59,6 +59,9 @@ local function on_play_sound(bits, pos)
         pos = pos
     }
 
+    while #gSubtitleSoundQueue >= 256 do -- avoid filling up memory
+        table.remove(gSubtitleSoundQueue, 1)
+    end
     table.insert(gSubtitleSoundQueue, queuedSound)
 end
 hook_event(HOOK_ON_PLAY_SOUND, on_play_sound)
