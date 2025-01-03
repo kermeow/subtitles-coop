@@ -95,7 +95,8 @@ compile()
             fi
             output_file=${output_file}.lua
             # echo "Copying ${file} > ${output_file} (no-c specified)"
-            cp $path ${OUTPUT_DIR}/${output_file}
+            tail -n +2 "$path" > ${TMP_DIR}/${output_file}
+            cp ${TMP_DIR}/${output_file} ${OUTPUT_DIR}/${output_file}
             continue
         fi
         output_file=${output_file}.luac
