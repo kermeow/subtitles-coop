@@ -46,7 +46,7 @@ local function on_play_sound(bits, pos)
     local sound = find_sound(bank_id, sound_id)
 
     if sound == nil then
-        local bank = MOD_SOUND_BANKS_BY_ID[bank_id]
+        local bank = gSoundBanksById[bank_id]
         if bank == nil then
             log_to_console(
                 string.format("SUBTITLES: Unregistered bank and sound! %01x %02x", bank_id, sound_id),

@@ -19,12 +19,12 @@ SOUND_TYPE_EFFECT = 1
 SOUND_TYPE_VOICE_EFFECT = 2
 
 ---@type SoundBank[]
-MOD_SOUND_BANKS = {}
-local MOD_SOUND_BANKS = MOD_SOUND_BANKS
+gSoundBanks = {}
+local gSoundBanks = gSoundBanks
 
 ---@type SoundBank[]
-MOD_SOUND_BANKS_BY_ID = {}
-local MOD_SOUND_BANKS_BY_ID = MOD_SOUND_BANKS_BY_ID
+gSoundBanksById = {}
+local gSoundBanksById = gSoundBanksById
 
 do -- Game sounds
     ---@param name string
@@ -39,9 +39,9 @@ do -- Game sounds
             bank_ids = bank_ids,
             sounds = {}
         }
-        table.insert(MOD_SOUND_BANKS, bank)
+        table.insert(gSoundBanks, bank)
         for _, bank_id in next, bank_ids do
-            MOD_SOUND_BANKS_BY_ID[bank_id] = bank
+            gSoundBanksById[bank_id] = bank
         end
         return bank
     end
@@ -63,7 +63,7 @@ do -- Game sounds
     ---@param type SoundType
     local function add_sound(bank_id, sound_id, name, type)
         ---@type SoundBank
-        local bank = MOD_SOUND_BANKS_BY_ID[bank_id]
+        local bank = gSoundBanksById[bank_id]
         if bank.unique_banks then
             sound_id = sound_id + (bank_id << 8)
         end
@@ -75,7 +75,7 @@ do -- Game sounds
 
     local function add_terrain_sound(bank_id, sound_id, name, type)
         ---@type SoundBank
-        local bank = MOD_SOUND_BANKS_BY_ID[bank_id]
+        local bank = gSoundBanksById[bank_id]
         local sound = add_sound(bank_id, sound_id, name, type)
         sound.variants = {
             [SOUND_TERRAIN_DEFAULT] = "",
@@ -151,10 +151,10 @@ do -- Game sounds
     end
 
     do -- VOICE
-        local sounds = MOD_SOUND_BANKS_BY_ID[SOUND_BANK_MARIO_VOICE].sounds
-        MOD_SOUND_BANKS_BY_ID[SOUND_BANK_LUIGI_VOICE].sounds = sounds
-        MOD_SOUND_BANKS_BY_ID[SOUND_BANK_TOAD_VOICE].sounds = sounds
-        MOD_SOUND_BANKS_BY_ID[SOUND_BANK_WARIO_VOICE].sounds = sounds
+        local sounds = gSoundBanksById[SOUND_BANK_MARIO_VOICE].sounds
+        gSoundBanksById[SOUND_BANK_LUIGI_VOICE].sounds = sounds
+        gSoundBanksById[SOUND_BANK_TOAD_VOICE].sounds = sounds
+        gSoundBanksById[SOUND_BANK_WARIO_VOICE].sounds = sounds
 
         local bank = SOUND_BANK_MARIO_VOICE
 
@@ -529,7 +529,7 @@ function find_sound(bank_id, sound_id)
         return cached_results[bank_id][sound_id]
     end
 
-    local bank = MOD_SOUND_BANKS_BY_ID[bank_id]
+    local bank = gSoundBanksById[bank_id]
     if not bank then return end
     if bank.unique_banks then
         sound_id = sound_id + (bank_id << 8)
