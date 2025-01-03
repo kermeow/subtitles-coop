@@ -69,5 +69,5 @@ function add_subtitle(set_id, bank_name, sound_name, text)
     if set == nil then error("Can't add subtitle to non-existent set", 2) end
     ---@type Subtitle
     local subtitle = { bank_name = bank_name, sound_name = sound_name, text = text }
-    set.subtitles[sound_name] = subtitle
+    set.subtitles[bank_name .. "/" .. sound_name] = subtitle
 end
