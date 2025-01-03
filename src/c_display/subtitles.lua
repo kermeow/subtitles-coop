@@ -21,7 +21,9 @@ local function on_hud_render()
 
     djui_hud_set_font(djui_menu_get_font())
 
-    for i, subtitle in next, gActiveSubtitles do
+    for i = #gActiveSubtitles, 1, -1 do
+        local subtitle = gActiveSubtitles[i]
+
         y = y - 48
         local width = math.floor((djui_hud_measure_text(subtitle.text) * text_scale) + 0.5)
         local x = math.floor((screen_width - width) / 2)
