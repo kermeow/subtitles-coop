@@ -30,8 +30,6 @@ local function on_play_sound(bits, pos)
     local upper_flags = bits & 0x0f000000
     local lower_flags = bits & 0x000000f0
 
-    if bank_id ~= SOUND_BANK_MOVING and lower_flags & SOUND_DISCRETE == 0 then return end
-
     -- special cases
     if bank_id == SOUND_BANK_MENU then
         if sound_id == 0x23 then -- STAR_SOUND_OKEY_DOKEY
@@ -43,7 +41,12 @@ local function on_play_sound(bits, pos)
         end
     end
 
-    local sound = find_sound(bank_id, sound_id)
+    local force_variant = nil
+    if gSoundBanksById[bank_id].name == "VOICE" then
+        force_variant = bank_id
+    end
+
+    local sound = find_sound(bank_id, sound_id, force_variant)
 
     if sound == nil then
         local bank = gSoundBanksById[bank_id]

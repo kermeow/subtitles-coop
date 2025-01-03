@@ -24,7 +24,7 @@ local function on_sound_command(varg)
         return true
     end
 
-    local mod_bank = MOD_SOUND_BANKS_BY_ID[bank_id]
+    local mod_bank = gSoundBanksById[bank_id]
     local sound
     for _, value in next, mod_bank.sounds do
         if value.name == sound_sid then
@@ -33,16 +33,26 @@ local function on_sound_command(varg)
         end
     end
     if sound == nil then
-        djui_chat_message_create(string.format("Unknown sound in bank %s: %s", bank_sid, sound_sid))
+        djui_chat_message_create(string.format("Unknown sound in bank %s: %s", mod_bank.name, sound_sid))
         return true
     end
 
     local sound_id = sound.id
-    if sound.variants ~= nil and #args == 3 then
+    if mod_bank.name ~= "VOICE" then
+        if sound.variants ~= nil and #args == 3 then
+            local variant_sid = string.upper(args[3])
+            for variant, sid in next, sound.variants do
+                if sid == variant_sid then
+                    sound_id = sound_id + variant
+                    break
+                end
+            end
+        end
+    elseif #args == 3 then
         local variant_sid = string.upper(args[3])
         for variant, sid in next, sound.variants do
             if sid == variant_sid then
-                sound_id = sound_id + variant
+                bank_id = variant
                 break
             end
         end

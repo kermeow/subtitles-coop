@@ -73,6 +73,27 @@ do -- Game sounds
         return sound
     end
 
+
+    ---@param bank_id integer
+    ---@param sound_id integer
+    ---@param name string
+    ---@param type SoundType
+    local function add_voice_sound(bank_id, sound_id, name, type)
+        ---@type SoundBank
+        local bank = gSoundBanksById[bank_id]
+        local sound = add_sound(bank_id, sound_id, name, type)
+        sound.variants = {
+            [SOUND_BANK_MARIO_VOICE] = "MARIO",
+            [SOUND_BANK_LUIGI_VOICE] = "LUIGI",
+            [SOUND_BANK_TOAD_VOICE] = "TOAD",
+            [SOUND_BANK_WARIO_VOICE] = "WARIO",
+        }
+    end
+
+    ---@param bank_id integer
+    ---@param sound_id integer
+    ---@param name string
+    ---@param type SoundType
     local function add_terrain_sound(bank_id, sound_id, name, type)
         ---@type SoundBank
         local bank = gSoundBanksById[bank_id]
@@ -151,62 +172,57 @@ do -- Game sounds
     end
 
     do -- VOICE
-        local sounds = gSoundBanksById[SOUND_BANK_MARIO_VOICE].sounds
-        gSoundBanksById[SOUND_BANK_LUIGI_VOICE].sounds = sounds
-        gSoundBanksById[SOUND_BANK_TOAD_VOICE].sounds = sounds
-        gSoundBanksById[SOUND_BANK_WARIO_VOICE].sounds = sounds
-
         local bank = SOUND_BANK_MARIO_VOICE
 
-        add_sound(bank, 0x00, "YAH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x01, "WAH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x02, "HOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x03, "HOOHOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x04, "YAHOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x05, "UH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x06, "HRMM", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x07, "WAH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x08, "WHOA", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x09, "EEUH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0A, "ATTACKED", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0B, "OOOF", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0C, "HERE_WE_GO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0D, "YAWNING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0E, "SNORING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0F, "SNORING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x10, "WAAAOOOW", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x11, "HAHA", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x13, "UH2", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x14, "ON_FIRE", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x15, "DYING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x16, "PANTING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x18, "PANTING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x19, "PANTING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1A, "PANTING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1B, "COUGHING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1C, "COUGHING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1D, "COUGHING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1E, "YAH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1F, "HOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x20, "MAMA_MIA", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x21, "OKEY_DOKEY", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x22, "WAH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x23, "DROWNING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x24, "WAH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x2B, "YAHOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x2C, "YAHOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x2D, "YAHOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x2E, "WAHA", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x2F, "YIPPEE", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x30, "DOH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x31, "GAME_OVER", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x32, "HELLO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x33, "PRESS_START_TO_PLAY", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x34, "TWIRL_BOUNCE", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x35, "SNORING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x36, "SO_LONGA_BOWSER", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x37, "IMA_TIRED", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x38, "LETS_A_GO", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x00, "YAH", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x01, "WAH", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x02, "WOO", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x03, "HOOHOO", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x04, "YAHOO", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x05, "UH", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x06, "HRMM", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x07, "WAH", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x08, "WHOA", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x09, "EEUH", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x0A, "ATTACKED", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x0B, "OOOF", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x0C, "HERE_WE_GO", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x0D, "YAWNING", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x0E, "SNORING", SOUND_TYPE_VOICE)
+        -- add_voice_sound(bank, 0x0F, "SNORING", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x10, "WAAAOOOW", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x11, "HAHA", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x13, "UH2", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x14, "ON_FIRE", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x15, "DYING", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x16, "PANTING", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x18, "PANTING", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x19, "PANTING", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x1A, "PANTING", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x1B, "COUGHING", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x1C, "COUGHING", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x1D, "COUGHING", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x1E, "YAH", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x1F, "HOO", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x20, "MAMA_MIA", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x21, "OKEY_DOKEY", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x22, "WAH2", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x23, "DROWNING", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x24, "WAH", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x2B, "YAHOO", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x2C, "YAHOO", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x2D, "YAHOO", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x2E, "WAHA", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x2F, "YIPPEE", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x30, "DOH", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x31, "GAME_OVER", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x32, "HELLO", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x33, "PRESS_START_TO_PLAY", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x34, "TWIRL_BOUNCE", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x35, "SLEEPTALK", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x36, "SO_LONGA_BOWSER", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x37, "IMA_TIRED", SOUND_TYPE_VOICE)
+        add_voice_sound(bank, 0x38, "LETS_A_GO", SOUND_TYPE_VOICE)
 
         -- Do Peach voicelines need to be subtitled? Usually include existing subtitles/text afaik
         -- add_sound(bank, 0x28, "PEACH_LETTER", SOUND_TYPE_VOICE) -- SOUND_PEACH_DEAR_MARIO
@@ -514,6 +530,7 @@ do -- Game sounds
 end
 
 ---@class SoundResult
+---@field full_name string
 ---@field bank SoundBank
 ---@field sound Sound
 ---@field variant integer?
@@ -523,8 +540,9 @@ local cached_results = {}
 
 ---@param bank_id integer
 ---@param sound_id integer
+---@param force_variant integer?
 ---@return SoundResult?
-function find_sound(bank_id, sound_id)
+function find_sound(bank_id, sound_id, force_variant)
     if cached_results[bank_id] and cached_results[bank_id][sound_id] then
         return cached_results[bank_id][sound_id]
     end
@@ -535,18 +553,18 @@ function find_sound(bank_id, sound_id)
         sound_id = sound_id + (bank_id << 8)
     end
 
-    local sound, variant
+    local sound, variant = nil, force_variant
     for _, value in next, bank.sounds do
         if value.id == sound_id then
             sound = value
             break
         end
-        if not value.variants then
+        if force_variant or not value.variants then
             goto search_next_sound
         end
         local variants = #value.variants
         local difference = sound_id - value.id
-        if difference < variants then
+        if difference >= 0 and difference < variants then
             sound = value
             variant = difference
             break
@@ -556,7 +574,12 @@ function find_sound(bank_id, sound_id)
     if not sound then return end
 
     ---@type SoundResult
-    local result = { bank = bank, sound = sound, variant = variant }
+    local result = { full_name = bank.name .. "/" .. sound.name, bank = bank, sound = sound, variant = variant }
+    if variant and sound.variants[variant] then
+        result.full_name = result.full_name .. "." .. sound.variants[variant]
+    elseif variant then
+        log_to_console(string.format("Found unknown variant of %s: %08x", result.full_name, variant))
+    end
 
     local cached_bank = cached_results[bank_id] or {}
     cached_bank[sound_id] = result
