@@ -30,6 +30,8 @@ local function on_hud_render()
         djui_hud_render_rect(x - 8, y - 4, width + 16, 44)
         djui_hud_set_color(255, 255, 255, 255)
         djui_hud_print_text(subtitle.text, x, y, text_scale)
+        djui_hud_set_color(100, 100, 100, 200)
+        djui_hud_print_text(subtitle.sound_result.full_name, x + 16 + width, y, text_scale)
     end
 end
 hook_event(HOOK_ON_HUD_RENDER, on_hud_render)
