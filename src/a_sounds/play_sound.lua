@@ -52,7 +52,6 @@ local function on_sound_command(varg)
     bits = bits + SOUND_NO_VOLUME_LOSS + SOUND_DISCRETE
     bits = bits + SOUND_STATUS_WAITING
 
-    log_to_console(string.format("%08x ", bits) .. string.format(" %08x", SOUND_MARIO_WAH2))
     play_sound(bits, gMarioStates[0].marioObj.header.gfx.cameraToObject)
 
     return true
