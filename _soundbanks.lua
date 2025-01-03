@@ -4,8 +4,10 @@
 ---@field sounds Sound[]
 
 ---@class Sound
+---@field id integer
 ---@field name string
 ---@field type SoundType
+---@field variants string[]?
 
 ---@class SoundType : integer
 ---@type SoundType
@@ -13,7 +15,7 @@ SOUND_TYPE_VOICE = 0
 ---@type SoundType
 SOUND_TYPE_EFFECT = 1
 ---@type SoundType
-SOUND_TYPE_MUSIC = 2
+SOUND_TYPE_VOICE_EFFECT = 2
 
 ---@type SoundBank[]
 MOD_SOUND_BANKS = {
@@ -61,22 +63,27 @@ do -- Game sounds
         ---@type SoundBank
         local bank = MOD_SOUND_BANKS_BY_ID[bank_id]
         ---@type Sound
-        bank.sounds[sound_id] = { name = name, type = type }
+        local sound = { id = sound_id, name = name, type = type }
+        bank.sounds[sound_id] = sound
+        return sound
     end
 
-    local terrain_prefix = {
-        [SOUND_TERRAIN_DEFAULT] = ".AIR",
-        [SOUND_TERRAIN_GRASS] = ".GRASS",
-        [SOUND_TERRAIN_WATER] = ".WATER",
-        [SOUND_TERRAIN_STONE] = ".STONE",
-        [SOUND_TERRAIN_SPOOKY] = ".SPOOKY",
-        [SOUND_TERRAIN_SNOW] = ".SNOW",
-        [SOUND_TERRAIN_ICE] = ".ICE",
-        [SOUND_TERRAIN_SAND] = ".SAND",
-    }
     local function add_terrain_sound(bank_id, sound_id, name, type)
-        for i = SOUND_TERRAIN_DEFAULT, SOUND_TERRAIN_SAND do
-            add_sound(bank_id, sound_id + i, name .. terrain_prefix[i], type)
+        ---@type SoundBank
+        local bank = MOD_SOUND_BANKS_BY_ID[bank_id]
+        local sound = add_sound(bank_id, sound_id, name, type)
+        sound.variants = {
+            [SOUND_TERRAIN_DEFAULT] = "",
+            [SOUND_TERRAIN_GRASS] = "GRASS",
+            [SOUND_TERRAIN_WATER] = "WATER",
+            [SOUND_TERRAIN_STONE] = "STONE",
+            [SOUND_TERRAIN_SPOOKY] = "SPOOKY",
+            [SOUND_TERRAIN_SNOW] = "SNOW",
+            [SOUND_TERRAIN_ICE] = "ICE",
+            [SOUND_TERRAIN_SAND] = "SAND",
+        }
+        for i = SOUND_TERRAIN_DEFAULT + 1, SOUND_TERRAIN_SAND do
+            bank.sounds[sound_id + i] = sound
         end
     end
 
@@ -143,7 +150,12 @@ do -- Game sounds
         add_sound(bank, 0x28, "RIDING_SHELL_LAVA", SOUND_TYPE_EFFECT)
     end
 
-    do -- SOUND_BANK_MARIO_VOICE
+    do -- SOUND_BANK_*_VOICE
+        local sounds = MOD_SOUND_BANKS_BY_ID[SOUND_BANK_MARIO_VOICE].sounds
+        MOD_SOUND_BANKS_BY_ID[SOUND_BANK_LUIGI_VOICE].sounds = sounds
+        MOD_SOUND_BANKS_BY_ID[SOUND_BANK_TOAD_VOICE].sounds = sounds
+        MOD_SOUND_BANKS_BY_ID[SOUND_BANK_WARIO_VOICE].sounds = sounds
+
         local bank = SOUND_BANK_MARIO_VOICE
 
         add_sound(bank, 0x00, "YAH", SOUND_TYPE_VOICE)
@@ -158,16 +170,13 @@ do -- Game sounds
         add_sound(bank, 0x09, "EEUH", SOUND_TYPE_VOICE)
         add_sound(bank, 0x0A, "ATTACKED", SOUND_TYPE_VOICE)
         add_sound(bank, 0x0B, "OOOF", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0B, "OOOF2", SOUND_TYPE_VOICE)
         add_sound(bank, 0x0C, "HERE_WE_GO", SOUND_TYPE_VOICE)
         add_sound(bank, 0x0D, "YAWNING", SOUND_TYPE_VOICE)
         add_sound(bank, 0x0E, "SNORING1", SOUND_TYPE_VOICE)
         add_sound(bank, 0x0F, "SNORING2", SOUND_TYPE_VOICE)
         add_sound(bank, 0x10, "WAAAOOOW", SOUND_TYPE_VOICE)
         add_sound(bank, 0x11, "HAHA", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x11, "HAHA_2", SOUND_TYPE_VOICE)
         add_sound(bank, 0x13, "UH2", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x13, "UH2_2", SOUND_TYPE_VOICE)
         add_sound(bank, 0x14, "ON_FIRE", SOUND_TYPE_VOICE)
         add_sound(bank, 0x15, "DYING", SOUND_TYPE_VOICE)
         add_sound(bank, 0x16, "PANTING_COLD", SOUND_TYPE_VOICE)
@@ -432,6 +441,7 @@ do -- Game sounds
 
         add_sound(bank, 0x00, "CHANGE_SELECT", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x02, "PAUSE", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x03, "PAUSE", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x04, "MESSAGE_APPEAR", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x05, "MESSAGE_DISAPPEAR", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x06, "CAMERA_ZOOM_IN", SOUND_TYPE_EFFECT)
@@ -445,7 +455,7 @@ do -- Game sounds
         add_sound(bank, 0x0F, "CAMERA_TURN", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x11, "CLICK_FILE_SELECT", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x13, "MESSAGE_NEXT_PAGE", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x14, "COIN_ITS_A_ME_MARIO", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x14, "COIN_ITS_A_ME_MARIO", SOUND_TYPE_VOICE)
         add_sound(bank, 0x15, "YOSHI_GAIN_LIVES", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x16, "ENTER_PIPE", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x17, "EXIT_PIPE", SOUND_TYPE_EFFECT)
@@ -456,8 +466,8 @@ do -- Game sounds
         add_sound(bank, 0x1E, "STAR_SOUND", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x1F, "THANK_YOU_PLAYING_MY_GAME", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x22, "MARIO_CASTLE_WARP2", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x23, "STAR_SOUND_OKEY_DOKEY", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x24, "STAR_SOUND_LETS_A_GO", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x23, "STAR_SOUND_OKEY_DOKEY", SOUND_TYPE_VOICE)
+        add_sound(bank, 0x24, "STAR_SOUND_LETS_A_GO", SOUND_TYPE_VOICE)
         add_sound(bank, 0x28, "COLLECT_RED_COIN", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x30, "COLLECT_SECRET", SOUND_TYPE_EFFECT)
     end
@@ -504,171 +514,6 @@ do -- Game sounds
         add_sound(bank, 0x67, "MONTY_MOLE_APPEAR", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x69, "BOSS_DIALOG_GRUNT", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x6B, "MRI_SPINNING", SOUND_TYPE_EFFECT)
-    end
-
-    do -- SOUND_BANK_LUIGI_VOICE
-        local bank = SOUND_BANK_LUIGI_VOICE
-
-        add_sound(bank, 0x00, "YAH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x01, "WAH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x02, "HOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x03, "HOOHOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x04, "YAHOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x05, "UH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x06, "HRMM", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x07, "WAH2", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x08, "WHOA", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x09, "EEUH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0A, "ATTACKED", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0B, "OOOF", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0B, "OOOF2", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0C, "HERE_WE_GO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0D, "YAWNING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0E, "SNORING1", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0F, "SNORING2", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x10, "WAAAOOOW", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x11, "HAHA", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x11, "HAHA_2", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x13, "UH2", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x13, "UH2_2", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x14, "ON_FIRE", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x15, "DYING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x16, "PANTING_COLD", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x18, "PANTING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x19, "PANTING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1A, "PANTING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1B, "COUGHING1", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1C, "COUGHING2", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1D, "COUGHING3", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1E, "PUNCH_YAH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1F, "PUNCH_HOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x20, "MAMA_MIA", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x21, "OKEY_DOKEY", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x22, "GROUND_POUND_WAH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x23, "DROWNING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x24, "PUNCH_WAH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x2B, "YAHOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x2C, "YAHOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x2D, "WAHA", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x2E, "YIPPEE", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x30, "DOH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x31, "GAME_OVER", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x32, "HELLO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x33, "PRESS_START_TO_PLAY", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x34, "TWIRL_BOUNCE", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x35, "SNORING3", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x36, "SO_LONGA_BOWSER", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x37, "IMA_TIRED", SOUND_TYPE_VOICE)
-    end
-
-    do -- SOUND_BANK_TOAD_VOICE
-        local bank = SOUND_BANK_TOAD_VOICE
-
-        add_sound(bank, 0x00, "YAH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x01, "WAH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x02, "HOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x03, "HOOHOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x04, "YAHOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x05, "UH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x06, "HRMM", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x07, "WAH2", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x08, "WHOA", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x09, "EEUH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0A, "ATTACKED", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0B, "OOOF", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0B, "OOOF2", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0C, "HERE_WE_GO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0D, "YAWNING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0E, "SNORING1", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0F, "SNORING2", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x10, "WAAAOOOW", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x11, "HAHA", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x11, "HAHA_2", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x13, "UH2", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x13, "UH2_2", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x14, "ON_FIRE", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x15, "DYING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x16, "PANTING_COLD", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x18, "PANTING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x19, "PANTING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1A, "PANTING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1B, "COUGHING1", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1C, "COUGHING2", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1D, "COUGHING3", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1E, "PUNCH_YAH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1F, "PUNCH_HOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x20, "MAMA_MIA", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x21, "OKEY_DOKEY", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x22, "GROUND_POUND_WAH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x23, "DROWNING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x24, "PUNCH_WAH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x2B, "YAHOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x2C, "YAHOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x2D, "WAHA", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x2E, "YIPPEE", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x30, "DOH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x31, "GAME_OVER", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x32, "HELLO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x33, "PRESS_START_TO_PLAY", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x34, "TWIRL_BOUNCE", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x35, "SNORING3", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x36, "SO_LONGA_BOWSER", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x37, "IMA_TIRED", SOUND_TYPE_VOICE)
-    end
-
-    do -- SOUND_BANK_WARIO_VOICE
-        local bank = SOUND_BANK_WARIO_VOICE
-
-        add_sound(bank, 0x00, "YAH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x01, "WAH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x02, "HOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x03, "HOOHOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x04, "YAHOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x05, "UH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x06, "HRMM", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x07, "WAH2", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x08, "WHOA", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x09, "EEUH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0A, "ATTACKED", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0B, "OOOF", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0B, "OOOF2", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0C, "HERE_WE_GO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0D, "YAWNING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0E, "SNORING1", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x0F, "SNORING2", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x10, "WAAAOOOW", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x11, "HAHA", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x11, "HAHA_2", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x13, "UH2", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x13, "UH2_2", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x14, "ON_FIRE", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x15, "DYING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x16, "PANTING_COLD", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x18, "PANTING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x19, "PANTING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1A, "PANTING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1B, "COUGHING1", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1C, "COUGHING2", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1D, "COUGHING3", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1E, "PUNCH_YAH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x1F, "PUNCH_HOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x20, "MAMA_MIA", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x21, "OKEY_DOKEY", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x22, "GROUND_POUND_WAH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x23, "DROWNING", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x24, "PUNCH_WAH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x2B, "YAHOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x2C, "YAHOO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x2D, "WAHA", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x2E, "YIPPEE", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x30, "DOH", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x31, "GAME_OVER", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x32, "HELLO", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x33, "PRESS_START_TO_PLAY", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x34, "TWIRL_BOUNCE", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x35, "SNORING3", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x36, "SO_LONGA_BOWSER", SOUND_TYPE_VOICE)
-        add_sound(bank, 0x37, "IMA_TIRED", SOUND_TYPE_VOICE)
     end
 end
 
