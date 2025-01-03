@@ -15,7 +15,10 @@ local sound_flag_names = {
 ---@field upper_flags integer
 ---@field lower_flags integer
 ---@field tick integer
+
+---@type SoundQueueItem[]
 gSubtitleSoundQueue = {}
+local gSubtitleSoundQueue = gSubtitleSoundQueue
 
 ---@param bits integer
 ---@param pos Vec3f
