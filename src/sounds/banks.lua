@@ -22,16 +22,16 @@ MOD_SOUND_BANKS = {
     { id = SOUND_BANK_ACTION,      name = "ACTION",      foreground = true,  sounds = {} },
     { id = SOUND_BANK_MOVING,      name = "MOVING",      foreground = true,  sounds = {} },
     { id = SOUND_BANK_MARIO_VOICE, name = "MARIO_VOICE", foreground = true,  sounds = {} },
-    { id = SOUND_BANK_GENERAL,     name = "GENERAL",     foreground = false, sounds = {} },
-    { id = SOUND_BANK_ENV,         name = "ENV",         foreground = false, sounds = {} },
-    { id = SOUND_BANK_OBJ,         name = "OBJ",         foreground = false, sounds = {} },
-    { id = SOUND_BANK_AIR,         name = "AIR",         foreground = false, sounds = {} },
-    { id = SOUND_BANK_MENU,        name = "MENU",        foreground = true,  sounds = {} },
-    { id = SOUND_BANK_GENERAL2,    name = "GENERAL2",    foreground = false, sounds = {} },
-    { id = SOUND_BANK_OBJ2,        name = "OBJ2",        foreground = false, sounds = {} },
     { id = SOUND_BANK_LUIGI_VOICE, name = "LUIGI_VOICE", foreground = true,  sounds = {} },
     { id = SOUND_BANK_WARIO_VOICE, name = "WARIO_VOICE", foreground = true,  sounds = {} },
     { id = SOUND_BANK_TOAD_VOICE,  name = "TOAD_VOICE",  foreground = true,  sounds = {} },
+    { id = SOUND_BANK_GENERAL,     name = "GENERAL",     foreground = false, sounds = {} },
+    { id = SOUND_BANK_GENERAL2,    name = "GENERAL2",    foreground = false, sounds = {} },
+    { id = SOUND_BANK_OBJ,         name = "OBJ",         foreground = false, sounds = {} },
+    { id = SOUND_BANK_OBJ2,        name = "OBJ2",        foreground = false, sounds = {} },
+    { id = SOUND_BANK_ENV,         name = "ENV",         foreground = false, sounds = {} },
+    { id = SOUND_BANK_AIR,         name = "AIR",         foreground = false, sounds = {} },
+    { id = SOUND_BANK_MENU,        name = "MENU",        foreground = true,  sounds = {} },
     { id = SOUND_BANK_COUNT,       name = "COUNT",       foreground = false, sounds = {} },
 }
 
@@ -40,16 +40,16 @@ MOD_SOUND_BANKS_BY_ID = {
     [SOUND_BANK_ACTION] = MOD_SOUND_BANKS[1],
     [SOUND_BANK_MOVING] = MOD_SOUND_BANKS[2],
     [SOUND_BANK_MARIO_VOICE] = MOD_SOUND_BANKS[3],
-    [SOUND_BANK_GENERAL] = MOD_SOUND_BANKS[4],
-    [SOUND_BANK_ENV] = MOD_SOUND_BANKS[5],
-    [SOUND_BANK_OBJ] = MOD_SOUND_BANKS[6],
-    [SOUND_BANK_AIR] = MOD_SOUND_BANKS[7],
-    [SOUND_BANK_MENU] = MOD_SOUND_BANKS[8],
-    [SOUND_BANK_GENERAL2] = MOD_SOUND_BANKS[9],
-    [SOUND_BANK_OBJ2] = MOD_SOUND_BANKS[10],
     [SOUND_BANK_LUIGI_VOICE] = MOD_SOUND_BANKS[11],
     [SOUND_BANK_WARIO_VOICE] = MOD_SOUND_BANKS[12],
     [SOUND_BANK_TOAD_VOICE] = MOD_SOUND_BANKS[13],
+    [SOUND_BANK_GENERAL] = MOD_SOUND_BANKS[4],
+    [SOUND_BANK_GENERAL2] = MOD_SOUND_BANKS[9],
+    [SOUND_BANK_OBJ] = MOD_SOUND_BANKS[6],
+    [SOUND_BANK_OBJ2] = MOD_SOUND_BANKS[10],
+    [SOUND_BANK_ENV] = MOD_SOUND_BANKS[5],
+    [SOUND_BANK_AIR] = MOD_SOUND_BANKS[7],
+    [SOUND_BANK_MENU] = MOD_SOUND_BANKS[8],
     [SOUND_BANK_COUNT] = MOD_SOUND_BANKS[14],
 }
 
@@ -118,8 +118,6 @@ do -- Game sounds
         add_sound(bank, 0x42, "METAL_BONK", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x43, "UNSTUCK_FROM_GROUND", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x44, "HIT", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x44, "HIT_2", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x44, "HIT_3", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x45, "BONK", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x46, "SHRINK_INTO_BBH", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x47, "SWIM_FAST", SOUND_TYPE_EFFECT)
@@ -274,7 +272,6 @@ do -- Game sounds
         add_sound(bank, 0x5E, "SOFT_LANDING", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x5F, "HAUNTED_CHAIR_MOVE", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x62, "BOWSER_PLATFORM", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x62, "BOWSER_PLATFORM_2", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x64, "HEART_SPIN", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x65, "POUND_WOOD_POST", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x66, "WATER_LEVEL_TRIG", SOUND_TYPE_EFFECT)
