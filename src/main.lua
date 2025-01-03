@@ -1,2 +1,2 @@
 -- name: Subtitles
--- description: Subtitles v1\n\nAdds subtitles for every sound.\n\n- kermeet
+-- description: Subtitles v1\n\nAdds closed captions for every single sound.\nEvery. Single. Sound.\n\n- kermeet
