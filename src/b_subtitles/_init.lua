@@ -75,3 +75,14 @@ function add_subtitle(set_id, bank_name, sound_name, text)
     local subtitle = { bank_name = bank_name, sound_name = sound_name, text = text }
     set.subtitles[bank_name .. "/" .. sound_name] = subtitle
 end
+
+--[[
+
+    TODO:
+
+    - Delayed subtitles (SNORING3/SLEEPTALK)
+    - Custom subtitle sets
+    - Subtitle set selection
+    - Closed Captions
+
+--]]
