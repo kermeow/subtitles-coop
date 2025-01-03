@@ -8,3 +8,6 @@ tmp/
 
 # Lua
 .luarc.json
+
+# For reference
+sounds.h
