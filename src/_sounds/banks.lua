@@ -1,6 +1,7 @@
 ---@class SoundBank
 ---@field name string
----@field foreground boolean
+---@field unique_banks boolean
+---@field bank_ids integer[]
 ---@field sounds Sound[]
 
 ---@class Sound
@@ -18,43 +19,44 @@ SOUND_TYPE_EFFECT = 1
 SOUND_TYPE_VOICE_EFFECT = 2
 
 ---@type SoundBank[]
-MOD_SOUND_BANKS = {
-    { id = SOUND_BANK_ACTION,      name = "ACTION",      foreground = true,  sounds = {} },
-    { id = SOUND_BANK_MOVING,      name = "MOVING",      foreground = true,  sounds = {} },
-    { id = SOUND_BANK_MARIO_VOICE, name = "MARIO_VOICE", foreground = true,  sounds = {} },
-    { id = SOUND_BANK_LUIGI_VOICE, name = "LUIGI_VOICE", foreground = true,  sounds = {} },
-    { id = SOUND_BANK_WARIO_VOICE, name = "WARIO_VOICE", foreground = true,  sounds = {} },
-    { id = SOUND_BANK_TOAD_VOICE,  name = "TOAD_VOICE",  foreground = true,  sounds = {} },
-    { id = SOUND_BANK_GENERAL,     name = "GENERAL",     foreground = false, sounds = {} },
-    { id = SOUND_BANK_GENERAL2,    name = "GENERAL2",    foreground = false, sounds = {} },
-    { id = SOUND_BANK_OBJ,         name = "OBJ",         foreground = false, sounds = {} },
-    { id = SOUND_BANK_OBJ2,        name = "OBJ2",        foreground = false, sounds = {} },
-    { id = SOUND_BANK_ENV,         name = "ENV",         foreground = false, sounds = {} },
-    { id = SOUND_BANK_AIR,         name = "AIR",         foreground = false, sounds = {} },
-    { id = SOUND_BANK_MENU,        name = "MENU",        foreground = true,  sounds = {} },
-    { id = SOUND_BANK_COUNT,       name = "COUNT",       foreground = false, sounds = {} },
-}
+MOD_SOUND_BANKS = {}
+local MOD_SOUND_BANKS = MOD_SOUND_BANKS
 
 ---@type SoundBank[]
-MOD_SOUND_BANKS_BY_ID = {
-    [SOUND_BANK_ACTION] = MOD_SOUND_BANKS[1],
-    [SOUND_BANK_MOVING] = MOD_SOUND_BANKS[2],
-    [SOUND_BANK_MARIO_VOICE] = MOD_SOUND_BANKS[3],
-    [SOUND_BANK_LUIGI_VOICE] = MOD_SOUND_BANKS[11],
-    [SOUND_BANK_WARIO_VOICE] = MOD_SOUND_BANKS[12],
-    [SOUND_BANK_TOAD_VOICE] = MOD_SOUND_BANKS[13],
-    [SOUND_BANK_GENERAL] = MOD_SOUND_BANKS[4],
-    [SOUND_BANK_GENERAL2] = MOD_SOUND_BANKS[9],
-    [SOUND_BANK_OBJ] = MOD_SOUND_BANKS[6],
-    [SOUND_BANK_OBJ2] = MOD_SOUND_BANKS[10],
-    [SOUND_BANK_ENV] = MOD_SOUND_BANKS[5],
-    [SOUND_BANK_AIR] = MOD_SOUND_BANKS[7],
-    [SOUND_BANK_MENU] = MOD_SOUND_BANKS[8],
-    [SOUND_BANK_COUNT] = MOD_SOUND_BANKS[14],
-}
+MOD_SOUND_BANKS_BY_ID = {}
+local MOD_SOUND_BANKS_BY_ID = MOD_SOUND_BANKS_BY_ID
 
 do -- Game sounds
-    ---Adds a sound to a game sound bank
+    ---@param name string
+    ---@param unique_banks boolean
+    ---@param bank_ids integer[]
+    local function create_soundbank(name, unique_banks, bank_ids)
+        if type(bank_ids) == "number" then bank_ids = { bank_ids } end
+        ---@type SoundBank
+        local bank = {
+            name = name,
+            unique_banks = unique_banks,
+            bank_ids = bank_ids,
+            sounds = {}
+        }
+        table.insert(MOD_SOUND_BANKS, bank)
+        for _, bank_id in next, bank_ids do
+            MOD_SOUND_BANKS_BY_ID[bank_id] = bank
+        end
+        return bank
+    end
+
+    local ACTION_BANK = create_soundbank("ACTION", false, SOUND_BANK_ACTION)
+    local MOVING_BANK = create_soundbank("MOVING", false, SOUND_BANK_MOVING)
+    local VOICE_BANK = create_soundbank("VOICE", false,
+        { SOUND_BANK_MARIO_VOICE, SOUND_BANK_LUIGI_VOICE, SOUND_BANK_TOAD_VOICE, SOUND_BANK_WARIO_VOICE }
+    )
+    local GENERAL_BANK = create_soundbank("GENERAL", true, { SOUND_BANK_GENERAL, SOUND_BANK_GENERAL2 })
+    local OBJECT_BANK = create_soundbank("OBJECT", true, { SOUND_BANK_OBJ, SOUND_BANK_OBJ2 })
+    local ENVIRONMENT_BANK = create_soundbank("ENVIRONMENT", false, SOUND_BANK_ENV)
+    local AIR_BANK = create_soundbank("AIR", false, SOUND_BANK_AIR) -- lol ok
+    local MENU_BANK = create_soundbank("MENU", false, SOUND_BANK_MENU)
+
     ---@param bank_id integer
     ---@param sound_id integer
     ---@param name string
@@ -62,9 +64,12 @@ do -- Game sounds
     local function add_sound(bank_id, sound_id, name, type)
         ---@type SoundBank
         local bank = MOD_SOUND_BANKS_BY_ID[bank_id]
+        if bank.unique_banks then
+            sound_id = sound_id + (bank_id << 8)
+        end
         ---@type Sound
         local sound = { id = sound_id, name = name, type = type }
-        bank.sounds[sound_id] = sound
+        table.insert(bank.sounds, sound)
         return sound
     end
 
@@ -82,12 +87,9 @@ do -- Game sounds
             [SOUND_TERRAIN_ICE] = "ICE",
             [SOUND_TERRAIN_SAND] = "SAND",
         }
-        for i = SOUND_TERRAIN_DEFAULT + 1, SOUND_TERRAIN_SAND do
-            bank.sounds[sound_id + i] = sound
-        end
     end
 
-    do -- SOUND_BANK_ACTION
+    do -- ACTION
         local bank = SOUND_BANK_ACTION
 
         add_terrain_sound(bank, 0x00, "TERRAIN_JUMP", SOUND_TYPE_EFFECT)
@@ -131,7 +133,7 @@ do -- Game sounds
         add_sound(bank, 0x5B, "READ_SIGN", SOUND_TYPE_EFFECT)
     end
 
-    do -- SOUND_BANK_MOVING
+    do -- MOVING
         local bank = SOUND_BANK_MOVING
 
         add_terrain_sound(bank, 0x00, "TERRAIN_SLIDE", SOUND_TYPE_EFFECT)
@@ -148,7 +150,7 @@ do -- Game sounds
         add_sound(bank, 0x28, "RIDING_SHELL_LAVA", SOUND_TYPE_EFFECT)
     end
 
-    do -- SOUND_BANK_*_VOICE
+    do -- VOICE
         local sounds = MOD_SOUND_BANKS_BY_ID[SOUND_BANK_MARIO_VOICE].sounds
         MOD_SOUND_BANKS_BY_ID[SOUND_BANK_LUIGI_VOICE].sounds = sounds
         MOD_SOUND_BANKS_BY_ID[SOUND_BANK_TOAD_VOICE].sounds = sounds
@@ -208,7 +210,7 @@ do -- Game sounds
         -- add_sound(bank, 0x28, "PEACH_LETTER", SOUND_TYPE_VOICE) -- SOUND_PEACH_DEAR_MARIO
     end
 
-    do -- SOUND_BANK_GENERAL
+    do -- GENERAL
         local bank = SOUND_BANK_GENERAL
 
         add_sound(bank, 0x00, "ACTIVATE_CAP_SWITCH", SOUND_TYPE_EFFECT)
@@ -289,9 +291,27 @@ do -- Game sounds
         add_sound(bank, 0x74, "GRAND_STAR_JUMP", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x75, "BOAT_ROCK", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x76, "VANISH_SFX", SOUND_TYPE_EFFECT)
+
+        bank = SOUND_BANK_GENERAL2
+
+        add_sound(bank, 0x2E, "BOBOMB_EXPLOSION", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x3E, "PURPLE_SWITCH", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x40, "ROTATING_BLOCK_CLICK", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x48, "SPINDEL_ROLL", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x4B, "PYRAMID_TOP_SPIN", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x4C, "PYRAMID_TOP_EXPLOSION", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x50, "BIRD_CHIRP2", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x54, "SWITCH_TICK_FAST", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x55, "SWITCH_TICK_SLOW", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x57, "STAR_APPEARS", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x59, "ROTATING_BLOCK_ALERT", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x60, "BOWSER_EXPLODE", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x61, "BOWSER_KEY", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x63, "1UP_APPEAR", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x6A, "RIGHT_ANSWER", SOUND_TYPE_EFFECT)
     end
 
-    do -- SOUND_BANK_ENV
+    do -- ENVIRONMENT
         local bank = SOUND_BANK_ENV
 
         add_sound(bank, 0x00, "WATERFALL1", SOUND_TYPE_EFFECT)
@@ -317,7 +337,7 @@ do -- Game sounds
         add_sound(bank, 0x18, "SINK_QUICKSAND", SOUND_TYPE_EFFECT)
     end
 
-    do -- SOUND_BANK_OBJ
+    do -- OBJECT
         local bank = SOUND_BANK_OBJ
 
         add_sound(bank, 0x00, "SUSHI_SHARK_WATER_SOUND", SOUND_TYPE_EFFECT)
@@ -414,9 +434,31 @@ do -- Game sounds
         add_sound(bank, 0x72, "SNUFIT_SKEETER_DEATH", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x73, "BUBBA_CHOMP", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x74, "ENEMY_DEFEAT_SHRINK", SOUND_TYPE_EFFECT)
+
+        bank = SOUND_BANK_OBJ2
+
+        add_sound(bank, 0x04, "BOWSER_ROAR", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x10, "PIRANHA_PLANT_BITE", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x11, "PIRANHA_PLANT_DYING", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x19, "BOWSER_PUZZLE_PIECE_MOVE", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x1C, "BULLY_ATTACKED", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x42, "KING_BOBOMB_DAMAGE", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x43, "SCUTTLEBUG_WALK", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x44, "SCUTTLEBUG_ALERT", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x45, "BABY_PENGUIN_YELL", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x49, "SWOOP", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x52, "BIRD_CHIRP1", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x57, "LARGE_BULLY_ATTACKED", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x5A, "EYEROK_SOUND_SHORT", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x5A, "WHOMP_SOUND_SHORT", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x5B, "EYEROK_SOUND_LONG", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x66, "BOWSER_TELEPORT", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x67, "MONTY_MOLE_APPEAR", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x69, "BOSS_DIALOG_GRUNT", SOUND_TYPE_EFFECT)
+        add_sound(bank, 0x6B, "MRI_SPINNING", SOUND_TYPE_EFFECT)
     end
 
-    do -- SOUND_BANK_AIR
+    do -- AIR
         local bank = SOUND_BANK_AIR
 
         add_sound(bank, 0x00, "BOWSER_SPIT_FIRE", SOUND_TYPE_EFFECT)
@@ -433,7 +475,7 @@ do -- Game sounds
         add_sound(bank, 0x10, "CASTLE_OUTDOORS_AMBIENT", SOUND_TYPE_EFFECT)
     end
 
-    do -- SOUND_BANK_MENU
+    do -- MENU
         local bank = SOUND_BANK_MENU
 
         add_sound(bank, 0x00, "CHANGE_SELECT", SOUND_TYPE_EFFECT)
@@ -468,73 +510,56 @@ do -- Game sounds
         add_sound(bank, 0x28, "COLLECT_RED_COIN", SOUND_TYPE_EFFECT)
         add_sound(bank, 0x30, "COLLECT_SECRET", SOUND_TYPE_EFFECT)
     end
-
-    do -- SOUND_BANK_GENERAL2
-        local bank = SOUND_BANK_GENERAL2
-
-        add_sound(bank, 0x2E, "BOBOMB_EXPLOSION", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x3E, "PURPLE_SWITCH", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x40, "ROTATING_BLOCK_CLICK", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x48, "SPINDEL_ROLL", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x4B, "PYRAMID_TOP_SPIN", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x4C, "PYRAMID_TOP_EXPLOSION", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x50, "BIRD_CHIRP2", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x54, "SWITCH_TICK_FAST", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x55, "SWITCH_TICK_SLOW", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x57, "STAR_APPEARS", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x59, "ROTATING_BLOCK_ALERT", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x60, "BOWSER_EXPLODE", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x61, "BOWSER_KEY", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x63, "1UP_APPEAR", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x6A, "RIGHT_ANSWER", SOUND_TYPE_EFFECT)
-    end
-
-    do --SOUND_BANK_OBJ2
-        local bank = SOUND_BANK_OBJ2
-
-        add_sound(bank, 0x04, "BOWSER_ROAR", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x10, "PIRANHA_PLANT_BITE", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x11, "PIRANHA_PLANT_DYING", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x19, "BOWSER_PUZZLE_PIECE_MOVE", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x1C, "BULLY_ATTACKED", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x42, "KING_BOBOMB_DAMAGE", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x43, "SCUTTLEBUG_WALK", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x44, "SCUTTLEBUG_ALERT", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x45, "BABY_PENGUIN_YELL", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x49, "SWOOP", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x52, "BIRD_CHIRP1", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x57, "LARGE_BULLY_ATTACKED", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x5A, "EYEROK_SOUND_SHORT", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x5A, "WHOMP_SOUND_SHORT", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x5B, "EYEROK_SOUND_LONG", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x66, "BOWSER_TELEPORT", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x67, "MONTY_MOLE_APPEAR", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x69, "BOSS_DIALOG_GRUNT", SOUND_TYPE_EFFECT)
-        add_sound(bank, 0x6B, "MRI_SPINNING", SOUND_TYPE_EFFECT)
-    end
 end
 
--- ---@class CustomSoundBank : SoundBank
+---@class SoundResult
+---@field bank SoundBank
+---@field sound Sound
+---@field variant integer?
 
--- ---@type CustomSoundBank[]
--- CUSTOM_SOUND_BANKS = {}
+---@type SoundResult[][]
+local cached_results = {}
 
--- ---Creates a custom sound bank for subtitles
--- ---@param name string
--- ---@param foreground boolean
--- function add_soundbank(name)
---     ---@type SoundBank
---     local bank = { name = "CUSTOM_" .. name, foreground = true, sounds = {} }
---     table.insert(CUSTOM_SOUND_BANKS, bank)
---     return #MOD_SOUND_BANKS + #CUSTOM_SOUND_BANKS
--- end
+---@param bank_id integer
+---@param sound_id integer
+---@return SoundResult?
+function find_sound(bank_id, sound_id)
+    if cached_results[bank_id] and cached_results[bank_id][sound_id] then
+        return cached_results[bank_id][sound_id]
+    end
 
--- ---Adds a sound to a custom sound bank for subtitles
--- ---@param bank_id integer
--- ---@param name string
--- function add_sound(bank_id, name)
---     ---@type SoundBank
---     local bank = CUSTOM_SOUND_BANKS[bank_id - #MOD_SOUND_BANKS]
---     if bank == nil then error("Can't add sound to non-existent bank", 2) end
---     table.insert(bank.sounds, { name = name })
--- end
+    local bank = MOD_SOUND_BANKS_BY_ID[bank_id]
+    if not bank then return end
+    if bank.unique_banks then
+        sound_id = sound_id + (bank_id << 8)
+    end
+
+    local sound, variant
+    for _, value in next, bank.sounds do
+        if value.id == sound_id then
+            sound = value
+            break
+        end
+        if not value.variants then
+            goto search_next_sound
+        end
+        local variants = #value.variants
+        local difference = sound_id - value.id
+        if difference < variants then
+            sound = value
+            variant = difference
+            break
+        end
+        ::search_next_sound::
+    end
+    if not sound then return end
+
+    ---@type SoundResult
+    local result = { bank = bank, sound = sound, variant = variant }
+
+    local cached_bank = cached_results[bank_id] or {}
+    cached_bank[sound_id] = result
+    cached_results[bank_id] = cached_bank
+
+    return result
+end
