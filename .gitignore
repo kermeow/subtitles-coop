@@ -1,13 +1,9 @@
-# Kate
-*.kate-swp
+# lubber
 
-# Build output
-out/
-tmp/
+.lubber/
+dist/
+*.luac
 *.zip
-
-# Lua
-.luarc.json
 
 # For reference
 sounds.h

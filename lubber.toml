@@ -1,0 +1,8 @@
+[mod]
+name = "subtitles"
+version = "0.1.0"
+description = "Adds subtitles to sm64coopdx."
+authors = ["kermeow"]
+
+[dependencies]
+sm64coopdx = "^1.0.0"
